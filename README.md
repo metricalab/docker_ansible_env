@@ -1,5 +1,5 @@
 # docker_ansible_env
-Demo de creación de máquinas ubuntu creadas con Docker y ejemplos ansible
+Demo de creación de máquinas ubuntu creadas con Docker y ejemplos ansible. Ha sido testeado en una distribución 20.04.3 LTS. Si se quiere probar en otra distribución se debe cambiar el método para instalar ansible, sshpass, curl y docker. El método con el que se ha instalado Docker obliga a usar sudo para el lanzamiento de comandos. Mira la sección de más info al final para cambiar este comportamiento.
 
 
 ## Instalamos ansible sshpass y curl (si no está instalado en la máquina Ubuntu)
@@ -144,7 +144,7 @@ docker network rm ansiblenet
 sudo docker images
 ```
 
-### Listado de contenedores
+### Listado de contenedores funcionando
 
 ```bash
 sudo docker ps -a
@@ -161,4 +161,8 @@ sudo docker network ls
 ```bash
 ansible-inventory --list -y
 ```
+
+# Más Info
+- https://conpilar.es/como-usar-docker-sin-sudo-en-ubuntu/
+- https://www.danielcastanera.com/comandos-utiles-en-docker/
 
