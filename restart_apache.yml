@@ -1,0 +1,12 @@
+--- 
+- hosts: servers 
+  remote_user: root
+  become: yes
+  become_method: sudo 
+  tasks:
+    - name: restart apache2 
+      service:
+        name: apache2
+        state: restarted
+ 
+
