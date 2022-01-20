@@ -65,7 +65,7 @@ ssh root@172.18.0.32
 ssh root@172.18.0.33
 ```
 
-## comando ansible para ver el uso de disco
+## Comando ansible para ver el uso de disco
 
 ```bash
 ansible all -a "df -h" -u root
