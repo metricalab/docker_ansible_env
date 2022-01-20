@@ -95,9 +95,9 @@ ansible-playbook restart_apache.yml
 ```
 
 ## Comprobamos que el apache del contenedor funciona
-http://localhost:8131/
-http://localhost:8132/
-http://localhost:8133/
+- http://localhost:8131/
+- http://localhost:8132/
+- http://localhost:8133/
 
 ## Eliminamos todas las keygen (ojo, la carpeta home del usuario actual es juan)
 
