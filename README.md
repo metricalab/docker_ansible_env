@@ -1,2 +1,95 @@
 # docker_ansible_env
 Demo de creación de máquinas ubuntu creadas con Docker y ejemplos ansible
+
+
+# Instalamos ansible sshpass y curl
+sudo apt-get update -y
+sudo apt install ansible -y
+sudo apt-get install sshpass -y
+sudo apt install curl -y
+
+# Instalamos docker
+curl -fsSL https://get.docker.com -o test-docker.sh
+sudo sh test-docker.sh
+
+# Modificamos el fichero hosts de ansible
+sudo nano /etc/ansible/hosts
+
+[servers]
+server1 ansible_host=172.18.0.31 ansible_ssh_user=root ansible_ssh_pass=ansiblepass
+server2 ansible_host=172.18.0.32 ansible_ssh_user=root ansible_ssh_pass=ansiblepass
+server3 ansible_host=172.18.0.33 ansible_ssh_user=root ansible_ssh_pass=ansiblepass
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+# Creamos una subnet
+sudo docker network create --subnet=172.18.0.0/16 ansiblenet
+
+# Creamos una imagen personalizada lista para poder conectarse via ssh y que contiene lo que nosotros
+# queremos
+sudo docker build -t ansibleenvssh .
+
+# Creamos 3 contenedores con la imagen previamente creada
+sudo docker run -p 8131:80 --net ansiblenet --ip 172.18.0.31 --name machine_1 -d ansibleenvssh
+sudo docker run -p 8132:80 --net ansiblenet --ip 172.18.0.32 --name machine_2 -d ansibleenvssh
+sudo docker run -p 8133:80 --net ansiblenet --ip 172.18.0.33 --name machine_3 -d ansibleenvssh
+
+# Conectamos con los contenedores mediante. La contraseña es ansiblepass (mirar Dockerfile):
+ssh root@172.18.0.31
+ssh root@172.18.0.32
+ssh root@172.18.0.33
+
+# comando ansible para ver el uso de disco
+ansible all -a "df -h" -u root
+
+# Comando ansible para ver el tiempo que lleva conectado cada servidor
+ansible servers -a "uptime" -u root
+
+# Comando ansible para instalar apache
+ansible-playbook install_apache.yml
+
+# Dentro de cada contenedor añadimos esta línea en el fichero /etc/apache2/apache2.conf
+ServerName 127.0.1
+
+# Salimos del contenedor (dentro de contenedor)
+exit
+
+# reiniciamos apache
+ansible-playbook restart_apache.yml
+
+# Comprobamos que el apache del contenedor funciona
+http://localhost:8131/
+http://localhost:8132/
+http://localhost:8133/
+
+# Eliminamos todas las keygen (ojo la carpeta home de estos ejemplos es juan)
+ssh-keygen -f "/home/juan/.ssh/known_hosts" -R "172.18.0.31"
+ssh-keygen -f "/home/juan/.ssh/known_hosts" -R "172.18.0.32"
+ssh-keygen -f "/home/juan/.ssh/known_hosts" -R "172.18.0.33"
+
+# Paramos los contendores
+sudo docker stop machine_1 machine_2 machine_3
+
+# Borramos los contendores
+sudo docker rm machine_1 machine_2 machine_3
+
+# Borramos las imagenes
+sudo docker rmi ansibleenvssh
+sudo docker rmi ubuntu:16.04
+
+# Borramos la red
+docker network rm ansiblenet
+
+# Comandos que pueden resultar útiles:
+
+# Listado de imágenes
+sudo docker images
+
+# Listado de contenedores
+sudo docker ps -a
+
+# Listado de las redes
+sudo docker network ls
+
+# Listado de los equipos en inventario
+ansible-inventory --list -y
