@@ -24,12 +24,16 @@ sudo sh test-docker.sh
 sudo nano /etc/ansible/hosts
 ```
 
+Contenido a añadir:
+
+```bash
 [servers]
 server1 ansible_host=172.18.0.31 ansible_ssh_user=root ansible_ssh_pass=ansiblepass
 server2 ansible_host=172.18.0.32 ansible_ssh_user=root ansible_ssh_pass=ansiblepass
 server3 ansible_host=172.18.0.33 ansible_ssh_user=root ansible_ssh_pass=ansiblepass
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
+```
 
 ## Creamos una subnet
 
